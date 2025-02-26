@@ -4,11 +4,10 @@ import numpy as np
 import rembg
 import os
 from flask_cors import CORS
+from PIL import Image
 
 app = Flask(__name__)
 CORS(app)  # CORS को Enable करो
-
-app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
 PROCESSED_FOLDER = "processed"
@@ -31,12 +30,14 @@ def remove_bg():
 
     file.save(input_path)
 
-    # OpenCV + Rembg से Background Remove
-    image = cv2.imread(input_path)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # Open Image using PIL
+    image = Image.open(input_path)
+
+    # Remove background
     result = rembg.remove(image)
 
-    cv2.imwrite(output_path, cv2.cvtColor(result, cv2.COLOR_RGB2BGR))
+    # Save output
+    result.save(output_path, format="PNG")
 
     return send_file(output_path, mimetype="image/png")
 
