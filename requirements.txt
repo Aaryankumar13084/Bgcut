@@ -4,3 +4,5 @@ rembg
 pillow
 opencv-python-headless
 numpy
+onnxruntime
+onnxruntime-gpu
