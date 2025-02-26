@@ -2,7 +2,6 @@ flask
 flask-cors
 rembg
 pillow
-opencv-python-headless
 numpy
+opencv-python-headless
 onnxruntime
-onnxruntime-gpu
