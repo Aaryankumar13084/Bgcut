@@ -1,17 +1,12 @@
-from flask import Flask, request, send_file, jsonify
-import os
+from flask import Flask, request, jsonify
 import rembg
 from PIL import Image
+import io
+import base64
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  
-
-UPLOAD_FOLDER = "uploads"
-PROCESSED_FOLDER = "processed"
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(PROCESSED_FOLDER, exist_ok=True)
+CORS(app)
 
 @app.route("/")
 def home():
@@ -23,16 +18,18 @@ def remove_bg():
         return jsonify({"error": "No file uploaded!"}), 400
 
     file = request.files["image"]
-    input_path = os.path.join(UPLOAD_FOLDER, file.filename)
-    output_path = os.path.join(PROCESSED_FOLDER, file.filename)
+    image = Image.open(file.stream)
 
-    file.save(input_path)
-
-    image = Image.open(input_path)
+    # Background Remove करो
     result = rembg.remove(image)
-    result.save(output_path, format="PNG")
 
-    return send_file(output_path, mimetype="image/png")
+    # Image को Base64 में Convert करो
+    img_io = io.BytesIO()
+    result.save(img_io, format="PNG")
+    img_io.seek(0)
+    img_base64 = base64.b64encode(img_io.read()).decode("utf-8")
+
+    return jsonify({"image": img_base64})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
