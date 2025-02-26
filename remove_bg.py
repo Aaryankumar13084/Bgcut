@@ -5,10 +5,9 @@ import io
 import base64
 from flask_cors import CORS
 
-# Flask App Create करो
 app = Flask(__name__)
 
-# CORS Middleware Enable करो
+# CORS को सभी origins के लिए Enable करो
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route("/")
@@ -32,10 +31,21 @@ def remove_bg():
     img_io.seek(0)
     img_base64 = base64.b64encode(img_io.read()).decode("utf-8")
 
-    # CORS Headers को Response में Add करो (अगर ज़रूरत हो)
+    # CORS Headers सही से सेट करें
     response = jsonify({"image": img_base64})
     response.headers.add("Access-Control-Allow-Origin", "*")
-    
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+
+    return response
+
+# OPTIONS Method को भी Handle करो ताकि CORS Preflight Issue ना आए
+@app.route("/remove-bg", methods=["OPTIONS"])
+def options_handler():
+    response = jsonify({"message": "CORS Preflight OK"})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
     return response
 
 if __name__ == "__main__":
