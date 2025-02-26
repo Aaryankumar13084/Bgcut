@@ -10,7 +10,7 @@ import os  # PORT environment variable ke liye
 app = Flask(__name__)
 
 # CORS ko enable karein (sabhi origins ko allow karein)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Home route
 @app.route("/")
@@ -50,7 +50,12 @@ def remove_bg():
 
         # Response mein base64 image return karein
         response = jsonify({"image": img_base64})
+
+        # CORS headers ko manually add karein
         response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST")
+
         return response
     
     except Exception as e:
