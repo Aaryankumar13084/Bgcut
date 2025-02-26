@@ -6,7 +6,7 @@ import base64
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # सभी Origins को Allow करें
+CORS(app)  # ग्लोबली CORS सेट करें, यह सभी रूट्स के लिए काम करेगा
 
 @app.route("/")
 def home():
@@ -31,10 +31,6 @@ def remove_bg():
 
     # CORS Headers को Add करें
     response = jsonify({"image": img_base64})
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-    response.headers.add("Access-Control-Allow-Methods", "POST")
-
     return response
 
 if __name__ == "__main__":
