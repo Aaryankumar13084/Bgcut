@@ -3,7 +3,7 @@ import rembg
 from PIL import Image
 import io
 import base64
-from flask_cors import CORS
+from flask_cors import CORS  # flask_cors ko import karein
 
 app = Flask(__name__)
 
