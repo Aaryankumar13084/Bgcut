@@ -5,3 +5,4 @@ numpy
 rembg
 pillow
 onnxruntime
+opencv-python-headless
