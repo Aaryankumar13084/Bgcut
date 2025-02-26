@@ -1,4 +1,7 @@
-Flask==2.3.2
-   rembg==2.0.38
-   pillow==10.0.0
-   flask_cors==4.0.0
+flask
+flask-cors
+rembg
+pillow
+numpy
+opencv-python-headless
+onnxruntime
