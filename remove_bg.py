@@ -7,8 +7,14 @@ from flask_cors import CORS  # flask_cors ko import karein
 
 app = Flask(__name__)
 
-# CORS ko enable karein (sabhi origins ko allow karein)
-CORS(app)
+# CORS ko enable karein (sabhi origins, headers, aur methods ko allow karein)
+CORS(app, resources={
+    r"/remove-bg": {
+        "origins": ["http://localhost:8080"],  # Sirf frontend origin ko allow karein
+        "methods": ["POST", "OPTIONS"],       # Sirf POST aur OPTIONS methods ko allow karein
+        "allow_headers": ["Content-Type"]     # Sirf Content-Type header ko allow karein
+    }
+})
 
 @app.route("/")
 def home():
@@ -19,7 +25,7 @@ def remove_bg():
     # Preflight request ko handle karein (OPTIONS method)
     if request.method == "OPTIONS":
         response = jsonify({"message": "Preflight request received"})
-        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8080")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST")
         return response
@@ -45,7 +51,7 @@ def remove_bg():
 
     # Response mein base64 image return karein
     response = jsonify({"image": img_base64})
-    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:8080")
     return response
 
 # Server ko run karein
