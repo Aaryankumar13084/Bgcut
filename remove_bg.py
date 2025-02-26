@@ -4,6 +4,15 @@ from PIL import Image
 import io
 import base64
 from flask_cors import CORS
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # सभी Origins को Allow करने के लिए "*"
+    allow_credentials=True,
+    allow_methods=["*"],  # सभी Methods Allow (GET, POST, PUT, DELETE)
+    allow_headers=["*"],  # सभी Headers Allow
+)
 
 app = Flask(__name__)
 CORS(app)
