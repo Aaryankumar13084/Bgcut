@@ -5,18 +5,15 @@ import io
 import base64
 from flask_cors import CORS
 
-# Flask app initialize karein
 app = Flask(__name__)
 
 # CORS ko enable karein (sabhi origins ko allow karein)
 CORS(app)
 
-# Home route
 @app.route("/")
 def home():
     return "🚀 Background Remove API is Running!"
 
-# Background remove karne ka route
 @app.route("/remove-bg", methods=["POST", "OPTIONS"])
 def remove_bg():
     # Preflight request ko handle karein (OPTIONS method)
