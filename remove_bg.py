@@ -5,7 +5,7 @@ from PIL import Image
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/remove-bg": {"origins": "*"}})  # ✅ CORS को सही तरीके से Enable किया गया है
+CORS(app)  
 
 UPLOAD_FOLDER = "uploads"
 PROCESSED_FOLDER = "processed"
@@ -32,9 +32,7 @@ def remove_bg():
     result = rembg.remove(image)
     result.save(output_path, format="PNG")
 
-    response = send_file(output_path, mimetype="image/png")
-    response.headers["Access-Control-Allow-Origin"] = "*"  # ✅ अब CORS Error नहीं आएगा
-    return response
+    return send_file(output_path, mimetype="image/png")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
