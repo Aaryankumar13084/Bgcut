@@ -34,23 +34,28 @@ def remove_bg():
 
     # Image file ko receive karein
     file = request.files["image"]
+
+    try:
+        # Image ko PIL ke saath open karein
+        image = Image.open(file.stream)
+
+        # rembg library ka istemal karke background remove karein
+        result = rembg.remove(image)
+
+        # Processed image ko base64 format mein convert karein
+        img_io = io.BytesIO()
+        result.save(img_io, format="PNG")
+        img_io.seek(0)
+        img_base64 = base64.b64encode(img_io.read()).decode("utf-8")
+
+        # Response mein base64 image return karein
+        response = jsonify({"image": img_base64})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
     
-    # Image ko PIL ke saath open karein
-    image = Image.open(file.stream)
-
-    # rembg library ka istemal karke background remove karein
-    result = rembg.remove(image)
-
-    # Processed image ko base64 format mein convert karein
-    img_io = io.BytesIO()
-    result.save(img_io, format="PNG")
-    img_io.seek(0)
-    img_base64 = base64.b64encode(img_io.read()).decode("utf-8")
-
-    # Response mein base64 image return karein
-    response = jsonify({"image": img_base64})
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+    except Exception as e:
+        # Agar koi error hoti hai to error message return karein
+        return jsonify({"error": f"Error processing image: {str(e)}"}), 500
 
 # Server ko run karein
 if __name__ == "__main__":
