@@ -7,7 +7,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-# CORS को ग्लोबली सेट करें
+# CORS को सही तरीके से सेट करना
 CORS(app, resources={r"/*": {"origins": "*"}})  # सभी Origins को Allow करें
 
 @app.route("/")
@@ -33,6 +33,12 @@ def remove_bg():
 
     # CORS Headers को Add करें
     response = jsonify({"image": img_base64})
+    
+    # CORS हेडर को Response में manually जोड़ना
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    response.headers.add("Access-Control-Allow-Methods", "POST")
+
     return response
 
 if __name__ == "__main__":
