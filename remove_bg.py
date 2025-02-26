@@ -6,7 +6,9 @@ import base64
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # ग्लोबली CORS सेट करें, यह सभी रूट्स के लिए काम करेगा
+
+# CORS को ग्लोबली सेट करें
+CORS(app, resources={r"/*": {"origins": "*"}})  # सभी Origins को Allow करें
 
 @app.route("/")
 def home():
