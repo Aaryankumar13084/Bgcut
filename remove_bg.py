@@ -3,29 +3,27 @@ import rembg
 from PIL import Image
 import io
 import base64
-from flask_cors import CORS  # flask_cors ko import karein
+from flask_cors import CORS
+import os  # PORT environment variable ke liye
 
+# Flask app initialize karein
 app = Flask(__name__)
 
-# CORS ko enable karein (sabhi origins, headers, aur methods ko allow karein)
-CORS(app, resources={
-    r"/remove-bg": {
-        "origins": ["http://localhost:8080"],  # Sirf frontend origin ko allow karein
-        "methods": ["POST", "OPTIONS"],       # Sirf POST aur OPTIONS methods ko allow karein
-        "allow_headers": ["Content-Type"]     # Sirf Content-Type header ko allow karein
-    }
-})
+# CORS ko enable karein (sabhi origins ko allow karein)
+CORS(app)
 
+# Home route
 @app.route("/")
 def home():
     return "🚀 Background Remove API is Running!"
 
+# Background remove karne ka route
 @app.route("/remove-bg", methods=["POST", "OPTIONS"])
 def remove_bg():
     # Preflight request ko handle karein (OPTIONS method)
     if request.method == "OPTIONS":
         response = jsonify({"message": "Preflight request received"})
-        response.headers.add("Access-Control-Allow-Origin", "http://localhost:8080")
+        response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST")
         return response
@@ -51,9 +49,10 @@ def remove_bg():
 
     # Response mein base64 image return karein
     response = jsonify({"image": img_base64})
-    response.headers.add("Access-Control-Allow-Origin", "http://localhost:8080")
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 # Server ko run karein
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))  # Railway par PORT environment variable ka istemal karein
+    app.run(host="0.0.0.0", port=port)
