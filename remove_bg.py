@@ -1,13 +1,11 @@
-from flask import Flask, request, send_file
-import cv2
-import numpy as np
-import rembg
+from flask import Flask, request, send_file, jsonify
 import os
-from flask_cors import CORS
+import rembg
 from PIL import Image
+from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # CORS को Enable करो
+CORS(app, resources={r"/remove-bg": {"origins": "*"}})  # ✅ CORS को सही तरीके से Enable किया गया है
 
 UPLOAD_FOLDER = "uploads"
 PROCESSED_FOLDER = "processed"
@@ -22,7 +20,7 @@ def home():
 @app.route("/remove-bg", methods=["POST"])
 def remove_bg():
     if "image" not in request.files:
-        return {"error": "No file uploaded!"}, 400
+        return jsonify({"error": "No file uploaded!"}), 400
 
     file = request.files["image"]
     input_path = os.path.join(UPLOAD_FOLDER, file.filename)
@@ -30,16 +28,13 @@ def remove_bg():
 
     file.save(input_path)
 
-    # Open Image using PIL
     image = Image.open(input_path)
-
-    # Remove background
     result = rembg.remove(image)
-
-    # Save output
     result.save(output_path, format="PNG")
 
-    return send_file(output_path, mimetype="image/png")
+    response = send_file(output_path, mimetype="image/png")
+    response.headers["Access-Control-Allow-Origin"] = "*"  # ✅ अब CORS Error नहीं आएगा
+    return response
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
