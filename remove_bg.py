@@ -3,6 +3,10 @@ import cv2
 import numpy as np
 import rembg
 import os
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)  # CORS को Enable करो
 
 app = Flask(__name__)
 
