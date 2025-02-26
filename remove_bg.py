@@ -4,18 +4,12 @@ from PIL import Image
 import io
 import base64
 from flask_cors import CORS
-from fastapi.middleware.cors import CORSMiddleware
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # सभी Origins को Allow करने के लिए "*"
-    allow_credentials=True,
-    allow_methods=["*"],  # सभी Methods Allow (GET, POST, PUT, DELETE)
-    allow_headers=["*"],  # सभी Headers Allow
-)
-
+# Flask App Create करो
 app = Flask(__name__)
-CORS(app)
+
+# CORS Middleware Enable करो
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route("/")
 def home():
@@ -38,7 +32,11 @@ def remove_bg():
     img_io.seek(0)
     img_base64 = base64.b64encode(img_io.read()).decode("utf-8")
 
-    return jsonify({"image": img_base64})
+    # CORS Headers को Response में Add करो (अगर ज़रूरत हो)
+    response = jsonify({"image": img_base64})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    
+    return response
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
